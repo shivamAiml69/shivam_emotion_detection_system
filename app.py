@@ -29,7 +29,7 @@ def preprocess_image(img_path):
 
 @app.route("/")
 def home():
-    return render_template("index.html")  # simple upload form
+    return render_template("index.html")  
 
 @app.route("/uploader", methods=['POST'])
 def uploader():
