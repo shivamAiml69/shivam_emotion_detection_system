@@ -1,15 +1,251 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hand Gesture Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            border-radius: 2px;
+        }
+        
+        .description {
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .upload-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 2px dashed #6e8efb;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-container:hover {
+            background: #f0f3ff;
+            border-color: #a777e3;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            color: #555;
+        }
+        
+        .file-label i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #6e8efb;
+            transition: all 0.3s ease;
+        }
+        
+        .file-label:hover i {
+            color: #a777e3;
+            transform: scale(1.1);
+        }
+        
+        .file-label span {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #777;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+            width: 100%;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(110, 142, 251, 0.6);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .instructions li:before {
+            content: '•';
+            color: #6e8efb;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .upload-container {
+                padding: 20px;
+            }
+        }
+        
+        .animation {
+            margin: 20px auto;
+            width: 100px;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 15 L65 40 L85 45 L70 65 L75 85 L50 75 L25 85 L30 65 L15 45 L35 40 Z" fill="%236e8efb" /></svg>') no-repeat center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Hand Gesture Detection</h1>
-    <form action="/uploader" method="post" enctype="multipart/form-data">
-        <label for="file1">Upload an image:</label>
-        <input type="file" name="file1" id="file1" required>
-        <br><br>
-        <input type="submit" value="Detect Gesture">
-    </form>
+    <div class="container">
+        <h1>Smart emotion detection system</h1>
+        
+        <p class="description">Upload an image of a emotion, and our AI will detect and interpret the emotion for you.</p>
+        
+        <div class="animation"></div>
+        
+        <form action="/uploader" method="post" enctype="multipart/form-data">
+            <div class="upload-container">
+                <label for="file1" class="file-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Choose an image to upload</span>
+                    <span class="browse-text">Click to browse your files</span>
+                    <div class="file-name" id="fileName">No file chosen</div>
+                </label>
+                <input type="file" name="file1" id="file1" class="file-input" required accept="image/*">
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-hands"></i> Detect Gesture
+            </button>
+        </form>
+        
+        <div class="instructions">
+            <h3>How it works:</h3>
+            <ul>
+                <li>Upload a clear image of a hand gesture</li>
+                <li>Our AI will analyze the image in seconds</li>
+                <li>Receive accurate gesture interpretation</li>
+                <li>Supports all common gesture types</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Display file name when selected
+        document.getElementById('file1').addEventListener('change', function(e) {
+            const fileName = e.target.files[0].name;
+            document.getElementById('fileName').textContent = fileName;
+        });
+    </script>
 </body>
 </html>
